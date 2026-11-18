@@ -14,6 +14,8 @@ object ChetakData {
     /** Newest value per characteristic UUID (lowercase), in first-seen order. */
     val lastByChar = LinkedHashMap<String, ByteArray>()
     val countByChar = HashMap<String, Int>()
+    /** Reads/subscriptions the scooter refused, per characteristic: GATT status (-1 = Android could not start it). */
+    val failures = LinkedHashMap<String, Int>()
     /** Short description of the scooter's services, from discovery. */
     var services: String = ""
     /** Address of the scooter the data above belongs to. */
@@ -33,7 +35,7 @@ object ChetakData {
     fun attach(address: String) {
         if (mac.equals(address, ignoreCase = true)) return
         mac = address.uppercase()
-        book.clear(); lastByChar.clear(); countByChar.clear(); services = ""
+        book.clear(); lastByChar.clear(); countByChar.clear(); failures.clear(); services = ""
         changed()
     }
 
@@ -43,6 +45,12 @@ object ChetakData {
         book.put(u, value, now)
         lastByChar[u] = value.copyOf()
         countByChar[u] = (countByChar[u] ?: 0) + 1
+        changed()
+    }
+
+    /** A read or subscription the scooter refused ([code] GATT status; 5/15/137 = needs encryption or pairing). */
+    fun failed(uuid: String, code: Int) {
+        failures[uuid.lowercase()] = code
         changed()
     }
 
@@ -103,6 +111,7 @@ object ChetakData {
         }
         append('\n').append(services).append('\n')
         for ((u, v) in lastByChar) append(shortUuid(u)).append(" ×").append(countByChar[u] ?: 0).append(": ").append(v.hex()).append('\n')
+        if (failures.isNotEmpty()) append("Refused: ").append(failures.entries.joinToString { "${shortUuid(it.key)} (GATT ${it.value})" }).append('\n')
     }
 
     fun addListener(listener: () -> Unit) { listeners += listener }

@@ -1296,6 +1296,7 @@ class ScooterConnection(
             }
             queue.pollFirst()
             writeOutcome(op, -1)
+            if (chetakMode) op.uuid?.let { ChetakData.failed(it.toString(), -1) }
             giveUp(op, "could not start")
             if (gatt == null) return
         }
@@ -1309,7 +1310,7 @@ class ScooterConnection(
         when {
             code == BluetoothGatt.GATT_SUCCESS -> { queue.pollFirst(); writeOutcome(op, null) }
             op.tries < op.maxTries -> log("${op.label} failed (GATT $code); retrying")
-            else -> { queue.pollFirst(); writeOutcome(op, code); giveUp(op, "failed (GATT $code)") }
+            else -> { queue.pollFirst(); writeOutcome(op, code); if (chetakMode) ChetakData.failed(uuid.toString(), code); giveUp(op, "failed (GATT $code)") }
         }
         pump()
     }

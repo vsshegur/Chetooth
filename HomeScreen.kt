@@ -49,7 +49,7 @@ class HomeScreen(private val host: Host) : Screen {
     private val ctx = host.context
     private val scope = Ui.scope()
     private val bar = TopAppBar(ctx)
-    private val chip = ConnectionChip(ctx) { openScooterSheet() }
+    private val chip = ConnectionChip(ctx) { if (needsChetakSetup()) host.openChetakSetup() else openScooterSheet() }
     private val scaffold = Scaffold(ctx, bar)
     override val view: View = scaffold
     private val page = scaffold.page
@@ -378,6 +378,8 @@ class HomeScreen(private val host: Host) : Screen {
         val label = when {
             link.phase == LinkPhase.CONNECTING -> if (link.reconnecting) "Reconnecting" else "Connecting"
             link.phase == LinkPhase.READY && link.live -> "Live"
+            // Chetooth: a Chetak that has not been taught its battery field yet: the chip opens the setup.
+            needsChetakSetup() -> "Set up battery"
             link.phase == LinkPhase.READY && link.silentSince > 0 -> "No data"
             link.phase == LinkPhase.READY -> "Connected"
             idle && link.error == BLUETOOTH_OFF -> "Bluetooth off"
@@ -388,6 +390,10 @@ class HomeScreen(private val host: Host) : Screen {
         chip.update(link.phase, label, attention = (link.phase == LinkPhase.READY && link.silentSince > 0) || fault)
         chip.tooltipText = link.error?.takeIf { idle } ?: "Scooter: $label"
     }
+
+    /** Chetooth: linked to a Chetak whose battery field has not been learned yet (nothing to show until it is). */
+    private fun needsChetakSetup(): Boolean =
+        !host.demoActive && host.linkPhase == LinkPhase.READY && ChetakData.linked && ChetakData.decoder(ctx, LearnField.SOC) == null
 
     private fun renderCall() {
         val call = host.callState

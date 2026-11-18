@@ -75,8 +75,15 @@ class ChetakSetup(private val host: Host) {
             else -> "Connected · receiving ${ChetakData.lastByChar.size} values from the scooter."
         }
         sections.forEach { it.render() }
-        raw.text = if (ChetakData.lastByChar.isEmpty()) "Nothing received yet."
-        else ChetakData.lastByChar.entries.joinToString("\n") { (u, v) -> "${shortUuid(u)} ×${ChetakData.countByChar[u] ?: 0}\n  ${v.hex()}" }
+        raw.text = buildString {
+            if (ChetakData.lastByChar.isEmpty()) append("Nothing received yet.")
+            else append(ChetakData.lastByChar.entries.joinToString("\n") { (u, v) -> "${shortUuid(u)} ×${ChetakData.countByChar[u] ?: 0}\n  ${v.hex()}" })
+            if (ChetakData.failures.isNotEmpty()) {
+                append("\n\nRefused by the scooter (GATT 5/15/137 = locked, needs pairing):\n")
+                append(ChetakData.failures.entries.joinToString("\n") { "${shortUuid(it.key)}  GATT ${it.value}" })
+            }
+            if (ChetakData.services.isNotEmpty()) append("\n\nServices offered:\n").append(ChetakData.services)
+        }
     }
 
     /** A message in the status line that stays until the next action (tag marks it as sticky). */
