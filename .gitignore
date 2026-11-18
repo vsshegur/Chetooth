@@ -1,0 +1,37 @@
+# Build output (bash build.sh / bash test.sh)
+build/
+dist/
+old_builds/
+*.apk
+*.aab
+*.idsig
+__pycache__/
+*.pyc
+
+# Signing keys and their passwords are never committed (build.sh reads RUTA_* from the
+# environment or local.env)
+*.jks
+*.keystore
+release.env
+local.env
+.env
+
+# Logs and data exports (may contain scooter identifiers or locations)
+logs/
+*.log
+*.csv
+
+# Local machine settings
+local.properties
+.DS_Store
+.idea/
+.vscode/
+*.iml
+*.hprof
+
+# Local tool output
+.claude/
+graphify-out/
+
+# Private planning notes
+NEXT.md

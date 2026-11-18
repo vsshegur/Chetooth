@@ -1,0 +1,30 @@
+Unofficial, open-source companion for Hero Vida electric scooters. Not affiliated with or endorsed by Hero MotoCorp Ltd. or Vida; those names are used only to describe compatibility.
+
+Ruta connects to your scooter over Bluetooth and shows what matters, in big numbers:
+
+• Live cluster: speed, front and rear pack charge, range, drive / standby / charging
+• Battery you can read: health, temperature, efficiency (km per 1 %), "Full in" while charging
+• Directions on the scooter: turn arrow, distance, road name and arrival from Google Maps; "Then left" for back-to-back turns
+• Range check: "12 km spare", "Tight" or "Short by 4 km" for the route you are on
+• Music: song, artist and volume on the display; handlebar buttons play, skip and change volume
+• Calls: caller name on the display; answer or reject from the handlebar; missed calls and messages
+• Show who messaged (optional): the sender's name on the scooter display when no music is playing
+• Ride receipts: route map, start and end, distance, speeds and battery used for every ride
+• Insights: 24 h / 7 d / 30 d charts for charge, range, temperature, health and charging
+• Find my scooter: remembers where you parked; one tap for walking directions
+• Alerts: charged to 80 / 90 / 100 %, charging stopped, not enough range for the route
+• Several scooters, each with its own Bluetooth PIN, stored encrypted on the phone
+• Demo mode: try every screen without a scooter
+
+Privacy: your data stays on your phone. No account, no ads, no analytics, no Ruta server. Place names come from Android's Geocoder.
+
+Why the permissions:
+• Nearby devices: find and connect to the scooter
+• Location: record rides and remember where you parked
+• Notification access (optional): read Google Maps turn-by-turn, now playing, and caller / missed-call / message notifications, to show them on the scooter display. Nothing leaves the phone.
+• Phone, call log and contacts (optional): show the caller's name and answer or reject calls from the handlebar. Ruta does not copy the call log.
+
+Directions on the scooter need the Google Maps app; everything else works without it.
+
+Works with Hero Vida scooters that have the Bluetooth telematics unit (tested on VX2). Android 11+.
+To see directions on the scooter: long-press the toggle button › Menu › Display › Widgets › Navigation › On.

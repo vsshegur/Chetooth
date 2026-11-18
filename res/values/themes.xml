@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Framework-only dark theme (no AppCompat/Material libraries), edge-to-edge (enforced at
+         targetSdk 35+; MainActivity also calls setDecorFitsSystemWindows(false) and applies insets).
+         Colours come from @color/ruta_theme_* (dynamic on API 31+, see values-v31/colors.xml).
+         aapt2 auto-versions the API 31 splash attributes into a -v31 copy of this style. -->
+    <style name="Theme.Ruta" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/ruta_theme_surface</item>
+        <item name="android:colorBackground">@color/ruta_theme_surface</item>
+        <item name="android:colorPrimary">@color/ruta_theme_primary</item>
+        <item name="android:colorAccent">@color/ruta_theme_primary</item>
+        <item name="android:colorControlActivated">@color/ruta_theme_primary</item>
+        <item name="android:colorControlNormal">@color/ruta_theme_on_surface_variant</item>
+        <item name="android:textColorPrimary">@color/ruta_theme_on_surface</item>
+        <item name="android:textColorSecondary">@color/ruta_theme_on_surface_variant</item>
+        <item name="android:forceDarkAllowed">false</item>
+
+        <!-- Edge-to-edge: transparent bars, no contrast scrims, light (dark-on-light) icons off. -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarDividerColor">@android:color/transparent</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+
+        <!-- Splash (API 31+): the dark surface with the Ruta mark (the launcher foreground: lime cookie
+             badge + electric_moped), no icon plate. -->
+        <item name="android:windowSplashScreenBackground">@color/ruta_theme_surface</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>

@@ -1,0 +1,3 @@
+• Show who messaged (optional, off by default): the sender's name on the scooter display when no music is playing. Never the message text.
+• Back-to-back turns: "Then left" instead of the road name when Maps announces a second turn right after.
+• Pairing: clearer reasons when pairing fails (wrong PIN, PIN request never reached the scooter, stale pairing).

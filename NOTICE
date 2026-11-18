@@ -1,0 +1,51 @@
+Chetooth
+Modified version of Ruta (https://github.com/CODESURGEN/ruta) for Bajaj Chetak
+scooters. Changes: Chetak mode in ScooterConnection.kt (read-only link to any
+scooter without the Hero TCU services), ChetakLearn.kt, ChetakData.kt,
+ChetakSetup.kt, Chetak-friendly pairing list, branding, build and CI.
+
+Ruta
+Copyright 2026 CODESURGEN
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+-------------------------------------------------------------------------------
+Third-party components
+-------------------------------------------------------------------------------
+
+Material Symbols (Rounded; outlined and filled vector icons)
+  Copyright Google LLC
+  Licensed under the Apache License, Version 2.0
+  https://github.com/google/material-design-icons
+  Converted from SVG to Android vector drawables (res/drawable); no other
+  changes. The Ruta mark uses the Material Symbols "electric_moped" glyph on
+  Ruta's own 9-point badge shape.
+
+Kotlin standard library (kotlin-stdlib)
+  Copyright JetBrains s.r.o. and Kotlin Programming Language contributors
+  Licensed under the Apache License, Version 2.0
+  https://github.com/JetBrains/kotlin
+
+kotlinx.coroutines (kotlinx-coroutines-core)
+  Copyright JetBrains s.r.o. and Kotlin Programming Language contributors
+  Licensed under the Apache License, Version 2.0
+  https://github.com/Kotlin/kotlinx.coroutines
+
+  Kotlin Compiler
+  Copyright 2010-2024 JetBrains s.r.o and respective authors and developers
+
+-------------------------------------------------------------------------------
+Trademarks
+-------------------------------------------------------------------------------
+
+Ruta is an independent, community project. It is not affiliated with,
+endorsed by or supported by Hero MotoCorp Ltd. or Vida. "Hero", "Hero
+MotoCorp" and "Vida" are trademarks of their respective owners and are used
+here only to describe which scooters Ruta works with. Ruta contains no Hero
+MotoCorp or Vida logos, assets or code. Google Maps is a trademark of
+Google LLC.
+
+Chetooth is likewise not affiliated with, endorsed by or supported by Bajaj
+Auto Ltd. or Chetak Technology Ltd. "Bajaj" and "Chetak" are trademarks of
+their respective owners and are used here only to describe which scooters
+Chetooth works with.

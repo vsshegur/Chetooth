@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chetooth (fork of Ruta). applicationId com.vsshegur.chetooth; Kotlin code stays in dev.codesurgen.ruta. versionCode/versionName and min/target SDK are
+     injected by build.sh (aapt2 link). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vsshegur.chetooth">
+
+    <!-- Scooter link: BLE GATT to the scooter's telematics unit by MAC. Scanning (Android 12+) only
+         finds scooters during onboarding; it is never used to derive location. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
+    <!-- Ride tracking (phone GPS while connected) and Geocoder place names. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- RideService keeps the link (and GPS) alive with the screen off. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Calls on the TFT: incoming number, caller name, accept/reject from the handlebar.
+         SMS permissions are deliberately absent (counts come from the notification listener). -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS"/>
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
+    <uses-feature android:name="android.hardware.telephony" android:required="false"/>
+
+    <queries>
+        <package android:name="com.google.android.apps.maps"/>
+        <!-- Music apps (Spotify, YouTube Music, JioSaavn…), so now playing shows their real app name. -->
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService"/>
+        </intent>
+    </queries>
+
+    <!-- The notification listener means Play Protect's enhanced fraud protection (India and some
+         other regions) can block installs from a browser or file manager outright, and Android 13+
+         marks such installs "restricted" so Notification access stays greyed out until App info ›
+         ⋮ › Allow restricted settings. README › Install covers both; developers use `adb install -r`. -->
+    <application android:label="@string/app_name" android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.Ruta" android:supportsRtl="true"
+        android:hardwareAccelerated="true" android:usesCleartextTraffic="false"
+        android:enableOnBackInvokedCallback="true">
+        <!-- Predictive back (default at targetSdk 36 on Android 16; explicit so 13-15 match):
+             MainActivity registers an OnBackInvokedCallback away from Home. Theme.Ruta is
+             edge-to-edge with transparent bars and Material You window/splash colours (API 31+). -->
+
+        <activity android:name="dev.codesurgen.ruta.MainActivity" android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden|keyboard|navigation|uiMode|density|fontScale|locale|layoutDirection|colorMode|fontWeightAdjustment|assetsPaths">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name="dev.codesurgen.ruta.RideService" android:exported="false"
+            android:label="@string/ride_service_label"
+            android:foregroundServiceType="connectedDevice|location"/>
+
+        <!-- Component name is load-bearing: renaming it drops the granted notification access. Its label
+             (Settings > Notification access) is "Ruta directions & music". -->
+        <service android:name="dev.codesurgen.ruta.MapsNavigationListener" android:label="@string/listener_label"
+            android:exported="true" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

@@ -1,0 +1,44 @@
+# F-Droid recipe for Ruta. Goes to metadata/dev.codesurgen.ruta.yml in a fork of
+# https://gitlab.com/fdroid/fdroiddata (see store/fdroid/README.md).
+AntiFeatures:
+  NonFreeDep:
+    en-US: Turn-by-turn directions on the scooter are read from the Google Maps app's navigation
+      notifications. Everything else works without it.
+Categories:
+  - Connectivity
+  - Navigation
+License: Apache-2.0
+SourceCode: https://github.com/CODESURGEN/ruta
+IssueTracker: https://github.com/CODESURGEN/ruta/issues
+Changelog: https://github.com/CODESURGEN/ruta/releases
+
+AutoName: Ruta
+
+RepoType: git
+Repo: https://github.com/CODESURGEN/ruta.git
+# Reproducible build: F-Droid builds the unsigned APK from the tag and ships the GitHub release APK
+# (Ruta key) only if they match, so F-Droid and GitHub installs update each other.
+Binaries: https://github.com/CODESURGEN/ruta/releases/download/v%v/ruta-%v.apk
+
+Builds:
+  - versionName: 1.0.2
+    versionCode: 102
+    commit: v1.0.2
+    sudo:
+      - apt-get update
+      - apt-get install -y curl unzip zip python3
+      - curl -fsSL -o /tmp/kotlinc.zip https://github.com/JetBrains/kotlin/releases/download/v2.4.21/kotlin-compiler-2.4.21.zip
+      - echo '7cc140e76daf416a0424a5557f99afd7ca89ebd463ea1101261e3e01c33e75cd  /tmp/kotlinc.zip'
+        | sha256sum -c
+      - unzip -q /tmp/kotlinc.zip -d /opt
+    output: dist/ruta-*-unsigned.apk
+    prebuild: sdkmanager 'build-tools;36.0.0' 'platforms;android-36'
+    build: PATH=/opt/kotlinc/bin:$PATH KOTLIN_LIB=/opt/kotlinc/lib bash build.sh --unsigned
+
+AllowedAPKSigningKeys: ce5391689d03e05431ae4eb1a7e7827db12cd3cd2c3a63a511767e06630ebed3
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9.]+$
+UpdateCheckData: build.sh|VERSION_CODE=(\d+)|.|VERSION_NAME=([\d.]+)
+CurrentVersion: 1.0.2
+CurrentVersionCode: 102
