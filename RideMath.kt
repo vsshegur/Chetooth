@@ -96,10 +96,30 @@ object RideMath {
     const val MOVING_KMH = 2.0
     const val START_KMH = 8.0
     const val START_HOLD_MS = 10_000L
+    /** A speed start also needs the position to get this far from where it was (Chetooth: GPS drift guard). */
+    const val START_MIN_MOVE_M = 50.0
+    /** ...within this window of filtered steps. */
+    const val START_MOVE_WINDOW_MS = 30_000L
     const val IGNITION_OFF_MS = 60_000L
     const val LINK_LOST_MS = 120_000L
     const val IDLE_MS = 300_000L
     const val MIN_RIDE_M = 200.0
+
+    /**
+     * Chetooth: true when the track really went somewhere in the last [windowMs]: some step is at
+     * least max([START_MIN_MOVE_M], 3 × median accuracy) from the window's first step. A parked
+     * scooter's phone indoors (veranda, multipath) can report 20+ km/h GPS speed while its position
+     * only wanders around one spot; that must not start a ride when the scooter reports no ignition.
+     */
+    fun movedAway(steps: Collection<TrackStep>, now: Long, windowMs: Long = START_MOVE_WINDOW_MS): Boolean {
+        val window = steps.filter { now - it.time in 0..windowMs }
+        if (window.size < 2) return false
+        val first = window.first()
+        val accuracies = window.map { it.accuracyM }.filter { it.isFinite() }.sorted()
+        val median = if (accuracies.isEmpty()) 0.0 else accuracies[accuracies.size / 2]
+        val need = max(START_MIN_MOVE_M, 3 * median)
+        return window.any { haversineM(first.lat, first.lng, it.lat, it.lng) >= need }
+    }
     const val MIN_RIDE_S = 60L
     /** Below this many charge points used, km per % is noise. */
     const val MIN_USED_PERCENT = 1.0
@@ -479,8 +499,11 @@ class RideSegmenter {
     private var idleSince: Long? = null
     private var lastMovingAt = 0L
 
-    /** [speedKmh] is the latest fresh filtered GPS speed, null without a recent fix. */
-    fun update(now: Long, linkReady: Boolean, ignitionOn: Boolean?, speedKmh: Double?): RideEvent? {
+    /**
+     * [speedKmh] is the latest fresh filtered GPS speed, null without a recent fix. [movedAway]
+     * ([RideMath.movedAway]): a speed start also needs real displacement, not GPS drift.
+     */
+    fun update(now: Long, linkReady: Boolean, ignitionOn: Boolean?, speedKmh: Double?, movedAway: Boolean = true): RideEvent? {
         if (ignitionOn == false) ignitionArmed = true
         val speed = speedKmh ?: 0.0
         fastSince = if (speed > RideMath.START_KMH) fastSince ?: now else null
@@ -489,7 +512,7 @@ class RideSegmenter {
             if (!linkReady) return null
             val byIgnition = ignitionOn == true && ignitionArmed
             val fast = fastSince
-            val bySpeed = fast != null && now - fast >= RideMath.START_HOLD_MS
+            val bySpeed = fast != null && now - fast >= RideMath.START_HOLD_MS && movedAway
             if (!byIgnition && !bySpeed) return null
             riding = true
             startedAt = if (bySpeed) fast else now

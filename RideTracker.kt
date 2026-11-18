@@ -231,7 +231,7 @@ class RideTracker(context: Context, private val store: TelemetryStore = Telemetr
                 runCatching { manager.isProviderEnabled(LocationManager.GPS_PROVIDER) }.getOrDefault(false)
         }
         val fresh = recent.lastOrNull()?.takeIf { now - it.time <= FRESH_FIX_MS }
-        when (val event = segmenter.update(now, ready, ignition, fresh?.speedKmh)) {
+        when (val event = segmenter.update(now, ready, ignition, fresh?.speedKmh, RideMath.movedAway(recent, now))) {
             is RideEvent.Started -> begin(event)
             is RideEvent.Ended -> end(event)
             null -> {}
